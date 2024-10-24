@@ -1,0 +1,1 @@
+bazel test //test/systems:cubli_test

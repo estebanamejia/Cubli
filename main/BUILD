@@ -1,4 +1,7 @@
 cc_binary(
     name = "cubli",
-    srcs = ["main.cpp"],
+    srcs = ["main.cpp",
+            "cubli.cpp",
+            "cubli.h"],
+    visibility = ["//visibility:public"]
 )
