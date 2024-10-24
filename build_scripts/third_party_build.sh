@@ -1,1 +1,1 @@
-bazel build third_party:rbdl
+bazel build //third_party:rbdl
