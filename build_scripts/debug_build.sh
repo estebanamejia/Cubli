@@ -1,0 +1,1 @@
+bazel build //main:cubli --verbose_failures
