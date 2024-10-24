@@ -1,3 +1,6 @@
+#include <rbdl/rbdl.h>
+using namespace RigidBodyDynamics::Math;
+
 void start_cubli();
 
-void get_cubli_pose();
+SpatialTransform get_cubli_pose();

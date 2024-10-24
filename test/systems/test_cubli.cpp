@@ -3,7 +3,7 @@
 
 TEST(StabilityTest, BasicAssertions) {
     start_cubli();
-    cubli_pose = get_cubli_pose();
-    start_pose;
+    SpatialTransform cubli_pose = get_cubli_pose();
+    SpatialTransform start_pose = SpatialTransform();
     EXPECT_EQ(cubli_pose, start_pose);
 }
