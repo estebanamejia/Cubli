@@ -3,5 +3,6 @@ cc_binary(
     srcs = ["main.cpp",
             "cubli.cpp",
             "cubli.h"],
-    visibility = ["//visibility:public"]
+    visibility = ["//visibility:public"],
+    deps = ["//third-party:rbdl"]
 )

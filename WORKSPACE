@@ -11,4 +11,5 @@ git_repository(
     commit = "d30180db66eb395f1fc768ecd0beab6554f2c927",
     recursive_init_submodules = True,
     init_submodules = True,
+    visibility = ["//visibility:public"]
 )
