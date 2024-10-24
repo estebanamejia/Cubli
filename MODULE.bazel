@@ -5,11 +5,10 @@
 # For more details, please check https://github.com/bazelbuild/bazel/issues/18958
 ###############################################################################
 
-rules_foreign_cc_dependencies = use_repo_rule("@rules_foreign_cc//foreign_cc:repositories.bzl", "rules_foreign_cc_dependencies")
-
 
 bazel_dep(name = "googletest", version = "1.15.2")
-bazel_dep(name = "rules_foreign_cc", version = "0.11.1")
+bazel_dep(name = "rules_foreign_cc", version = "0.12.0")
 
+rules_foreign_cc_dependencies = use_repo_rule("@rules_foreign_cc//foreign_cc:repositories.bzl", "rules_foreign_cc_dependencies")
 
-rules_foreign_cc_dependencies(name = "foreign_cc_deps")
+rules_foreign_cc_dependencies(name="foreign_cc_deps")
