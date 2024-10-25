@@ -1,1 +1,1 @@
-bazel build //main:cubli
+bazel build //main:main

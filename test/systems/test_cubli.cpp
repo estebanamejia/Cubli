@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
-#include "main/cubli.h"
+#include "cubli/cubli.h"
 
 TEST(StabilityTest, BasicAssertions) {
     start_cubli();
-    SpatialTransform cubli_pose = get_cubli_pose();
-    SpatialTransform start_pose = SpatialTransform();
+    Pose cubli_pose = get_cubli_pose();
+    Pose start_pose = Pose();
     EXPECT_EQ(cubli_pose, start_pose);
 }

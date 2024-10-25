@@ -1,1 +1,1 @@
-bazel build //main:cubli --verbose_failures
+bazel build //main:main --verbose_failures --sandbox_debug
