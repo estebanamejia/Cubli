@@ -1,5 +1,12 @@
-#include "math/Pose.h"
+#include "math/Frame.h"
+#include "cubli/cubli_state.h"
 
-void start_cubli();
+class Cubli {
+    private:
+        CubliState state_;
+    public:
+        void start_cubli();
+        void balance_cubli();
+        Pose get_cubli_pose(FrameName &name);
+};
 
-Pose get_cubli_pose();

@@ -1,5 +1,6 @@
 #include "cubli/cubli.h"
 
 int main() {
-    start_cubli();
+    Cubli cubli = Cubli();
+    cubli.start_cubli();
 }

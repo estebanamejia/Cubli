@@ -3,7 +3,9 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "/home/esteban/.cache/bazel/_bazel_esteban/df8a54937767cb3ba36b01679e00d666/execroot/_main/bazel-out/k8-fastbuild/bin/third-party/copy_rbdl-ext/rbdl-ext/include",
+                "/usr/include/eigen3"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
