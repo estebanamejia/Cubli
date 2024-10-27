@@ -7,6 +7,6 @@ class Cubli {
     public:
         void start_cubli();
         void balance_cubli();
-        Pose get_cubli_pose(FrameName &name);
+        Pose get_cubli_pose(const FrameName &name);
 };
 

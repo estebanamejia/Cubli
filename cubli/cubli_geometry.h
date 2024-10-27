@@ -4,6 +4,6 @@ using namespace std;
 
 class CubliFrameNames {
     public:
-        FrameName WORLD() { return FrameName("WORLD"); }
-        FrameName CUBLI() { return FrameName("CUBLI"); }
+        FrameName WORLD() const { return FrameName("WORLD"); }
+        FrameName CUBLI() const { return FrameName("CUBLI"); }
 };

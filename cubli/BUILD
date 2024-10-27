@@ -4,7 +4,9 @@ cc_library(
             "cubli.cpp",
             "cubli_state.h",
             "cubli_state.cpp",
-            "cubli_geometry.h"],
+            "cubli_geometry.h",
+            "cubli_planning.h",
+            "cubli_planning.cpp",],
     visibility = ["//visibility:public"],
     deps = ["//third-party:rbdl",
             "//math:math"]

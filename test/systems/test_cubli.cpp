@@ -1,15 +1,19 @@
 #include <gtest/gtest.h>
 #include "cubli/cubli.h"
-#include "planning/planning.h"
+#include "cubli/cubli_geometry.h"
+#include "cubli/cubli_planning.h"
 
 TEST(StabilityTest, BasicAssertions) {
-    start_cubli();
-    Pose cubli_pose = get_cubli_pose();
+    CubliPlanner cubli_planner = CubliPlanner();
+    Cubli cubli = Cubli();
+    CubliFrameNames names = CubliFrameNames();
+    cubli.start_cubli();
+    Pose cubli_pose = cubli.get_cubli_pose(names.WORLD());
     Pose start_pose = Pose();
     EXPECT_EQ(cubli_pose, start_pose);
 
-    balance_cubli();
-    Pose balanced_pose = calculate_balance_pose();
-    cubli_pose = get_cubli_pose();
+    cubli.balance_cubli();
+    Pose balanced_pose = cubli_planner.calculate_balance_pose();
+    cubli_pose = cubli.get_cubli_pose(names.WORLD());
     EXPECT_EQ(cubli_pose, balanced_pose);
 }

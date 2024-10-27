@@ -12,7 +12,7 @@ void Point::set_pos_frame(Vector3d const &pos, Frame const &frame) {
     };
 };
 
-Vector3d Point::pos_in_frame(FrameName &name) const {
+Vector3d Point::pos_in_frame(const FrameName &name) const {
     pair<Frame, Vector3d> frame_pos = pos_frame_map_.at(name);
     return frame_pos.second;
 };
