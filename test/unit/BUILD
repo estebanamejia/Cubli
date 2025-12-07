@@ -7,7 +7,4 @@ cc_test(
         "@googletest//:gtest_main",
         "//math:math",
     ],
-    args = [
-        "--gtest_print_time=1",
-    ],
 )
