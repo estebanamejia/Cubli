@@ -9,4 +9,7 @@ cc_test(
         "//math:math",
         "@rbdl//:rbdl",
     ],
+    args = [
+        "--gtest_print_time=1",
+    ],
 )
