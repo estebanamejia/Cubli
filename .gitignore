@@ -1,2 +1,10 @@
 launch.json
 bazel*
+
+# Third-party dependencies extracted/cloned by setup.sh
+# Keep only the BUILD.bazel and MODULE.bazel files
+third-party/eigen/Eigen/
+third-party/rbdl/src/
+third-party/rbdl/include/rbdl/
+third-party/rbdl/CMakeLists.txt
+!third-party/rbdl/include/rbdl/rbdl_config.h
