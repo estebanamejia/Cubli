@@ -1,11 +1,13 @@
 cc_library(
     name = "math",
-    srcs = ["Pose.h",
-            "Pose.cpp",
+    hdrs = ["Pose.h",
             "Frame.h",
+            "Point.h"],
+    srcs = ["Pose.cpp",
             "Frame.cpp",
-            "Point.h",
             "Point.cpp"],
+    includes = ["."],
+    strip_include_prefix = ".",
     visibility = ["//visibility:public"],
-    deps = ["//third-party:rbdl"]
+    deps = ["@rbdl//:rbdl"]
 )

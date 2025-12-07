@@ -1,7 +1,9 @@
 cc_binary(
     name = "main",
     srcs = ["main.cpp"],
-    visibility = ["//visibility:public"],
-    deps = ["//third-party:rbdl",
-            "//cubli:cubli"]
+    deps = [
+        "@eigen//:eigen",
+        "@rbdl//:rbdl",
+        "//cubli_core:cubli_core",
+    ],
 )

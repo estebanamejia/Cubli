@@ -1,0 +1,15 @@
+# WORKSPACE file for compatibility and local dependency management
+# Note: With Bazel 7.4.0, MODULE.bazel is preferred, but this helps with local paths
+
+workspace(name = "cubli")
+
+# Local path bindings for third-party libraries
+local_repository(
+    name = "eigen",
+    path = "third-party/eigen",
+)
+
+local_repository(
+    name = "rbdl",
+    path = "third-party/rbdl",
+)

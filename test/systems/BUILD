@@ -5,8 +5,8 @@ cc_test(
     deps = [
         "@googletest//:gtest",
         "@googletest//:gtest_main",
-        "//cubli:cubli",
+        "//cubli_core:cubli_core",
         "//math:math",
-        "//third-party:rbdl",
+        "@rbdl//:rbdl",
     ],
 )

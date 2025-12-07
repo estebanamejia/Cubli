@@ -1,0 +1,20 @@
+cc_library(
+    name = "rbdl",
+    hdrs = glob(
+        ["include/**/*.h"],
+        allow_empty = True,
+    ),
+    srcs = glob(
+        ["src/**/*.cc", "src/**/*.cpp"],
+        allow_empty = True,
+    ),
+    includes = ["include"],
+    visibility = ["//visibility:public"],
+    copts = [
+        "-fPIC",
+        "-std=c++11",
+    ],
+    deps = [
+        "@eigen//:eigen",
+    ],
+)
