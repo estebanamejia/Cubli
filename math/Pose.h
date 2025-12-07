@@ -6,7 +6,7 @@ class Pose {
         Matrix3d orientation_;
         Vector3d translation_;
     public:
-        Pose(Matrix3d &orientation = Matrix3dIdentity, Vector3d &translation = Vector3dZero) : orientation_(orientation), translation_(translation) {}
+        Pose(const Matrix3d &orientation = Matrix3dIdentity, const Vector3d &translation = Vector3dZero) : orientation_(orientation), translation_(translation) {}
         Matrix3d orientation() const {return orientation_;}
         Vector3d translation() const {return translation_;}
     protected:
