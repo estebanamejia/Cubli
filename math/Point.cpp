@@ -1,18 +1,11 @@
 #include "Point.h"
+#include "math/FrameTransform.h"
+#include <stdexcept>
 
-Point::Point(Vector3d const &pos, Frame const &frame) {
-    set_pos_frame(pos, frame);
-};
+Point::Point(Vector3d const &pos) : position_(pos) {}
 
-void Point::set_pos_frame(Vector3d const &pos, Frame const &frame) {
-    bool frame_not_in_map = pos_frame_map_.find(frame.name()) == pos_frame_map_.end();
-    if (frame_not_in_map) {
-        pair<Frame, Vector3d> frame_pos (frame, pos);
-        pos_frame_map_.insert({frame.name(), frame_pos});
-    };
-};
-
-Vector3d Point::pos_in_frame(const FrameName &name) const {
-    pair<Frame, Vector3d> frame_pos = pos_frame_map_.at(name);
-    return frame_pos.second;
-};
+Vector3d Point::in_frame(const Frame &source_frame, const Frame &target_frame) const {
+    // This is a stub - actual transformation requires a FrameTransform
+    // The user must provide a FrameTransform to define the relationship
+    throw std::runtime_error("Point::in_frame() requires a FrameTransform to define frame relationship");
+}

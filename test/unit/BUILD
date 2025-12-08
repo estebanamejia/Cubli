@@ -8,3 +8,14 @@ cc_test(
         "//math:math",
     ],
 )
+
+cc_test(
+    name = "frame_transform_test",
+    size = "small",
+    srcs = ["test_frame_transform.cpp"],
+    deps = [
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+        "//math:math",
+    ],
+)
