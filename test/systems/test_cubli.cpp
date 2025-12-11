@@ -2,6 +2,7 @@
 #include "cubli/cubli.h"
 #include "cubli/cubli_geometry.h"
 #include "cubli/cubli_planning.h"
+#include "math/Pose.h"
 
 TEST(StabilityTest, BasicAssertions) {
     CubliPlanner cubli_planner = CubliPlanner();
