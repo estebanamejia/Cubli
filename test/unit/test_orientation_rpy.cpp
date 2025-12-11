@@ -37,7 +37,7 @@ TEST(OrientationTest, RpyRoundTripRandom) {
         Eigen::Quaterniond q_out = rz * ry * rx; // yaw * pitch * roll
 
         // Compare rotation matrices (more robust to Euler non-uniqueness)
-        Eigen::Matrix3d R1 = o.orientation();
+        Eigen::Matrix3d R1 = o.rotation_matrix();
         Eigen::Matrix3d R2 = q_out.toRotationMatrix();
         double err = (R1 - R2).norm();
 

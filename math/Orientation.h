@@ -27,7 +27,7 @@ class Orientation {
         Orientation(const Eigen::Quaterniond& q, const FrameID& frame_id);
 
         // Retrieve as a rotation matrix
-        Matrix3d orientation() const { return quat_.toRotationMatrix(); }
+        Matrix3d rotation_matrix() const { return quat_.toRotationMatrix(); }
 
         // Retrieve the underlying quaternion
         Eigen::Quaterniond quaternion() const { return quat_; }

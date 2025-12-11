@@ -20,7 +20,7 @@ Orientation FrameTransform::transform_orientation(const Orientation &orientation
                           orientation_in_source : orientation_in_source.in_frame(source_frame_);
 
     // ori_in_target = R * ori_in_source
-    Matrix3d ori_in_target = transform_pose_.orientation() * ori_src.orientation();
+    Matrix3d ori_in_target = transform_pose_.orientation() * ori_src.rotation_matrix();
     return Orientation(ori_in_target, target_frame_);
 }
 
@@ -32,7 +32,7 @@ Pose FrameTransform::transform_pose(const Pose &pose_in_source) const {
     Orientation ori_in_target = transform_orientation(ori_src);
     Position pos_in_target = transform_position(pos_src);
 
-    return Pose(ori_in_target.orientation(), pos_in_target.position(), target_frame_);
+    return Pose(ori_in_target.rotation_matrix(), pos_in_target.position(), target_frame_);
 }
 
 FrameTransform FrameTransform::inverse() const {

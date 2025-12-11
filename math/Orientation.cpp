@@ -61,21 +61,13 @@ Eigen::Vector3d Orientation::rpy() const {
 }
 
 Orientation Orientation::in_frame(const FrameID& target_frame_id) const {
-    if (frame_id_ == target_frame_id) {
-        // Already in target frame
-        return Orientation(quat_, frame_id_);
-    }
-    
     // Query the frame tree for the transform
     FrameTree& tree = FrameTree::instance();
     FrameTransform transform = tree.get_transform_or_throw(frame_id_, target_frame_id);
     
-    // Transform the orientation by creating a pose with zero translation and transforming it
-    Pose temp_pose(orientation(), 0.0, 0.0, 0.0, frame_id_);
-    Pose transformed_pose = transform.transform_pose(temp_pose);
-    
-    return Orientation(transformed_pose.orientation(), target_frame_id);
-}
+    // Transform the orientation
+    return transform.transform_orientation(*this);
+    }
 
 bool operator==(const Orientation& lhs, const Orientation& rhs) {
     return lhs.isEqual(rhs);
