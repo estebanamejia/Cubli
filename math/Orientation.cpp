@@ -1,12 +1,15 @@
 #include "Orientation.h"
+#include "math/FrameTree.h"
 #include "math/FrameTransform.h"
 #include <stdexcept>
 
-Orientation::Orientation(Matrix3d const &ori) : quat_(ori) {}
+Orientation::Orientation(const Matrix3d& ori, const FrameID& frame_id)
+    : quat_(ori), frame_id_(frame_id) {}
 
-Orientation::Orientation(const Eigen::Quaterniond &q) : quat_(q) {}
+Orientation::Orientation(const Eigen::Quaterniond& q, const FrameID& frame_id)
+    : quat_(q), frame_id_(frame_id) {}
 
-Orientation Orientation::fromRPY(double roll, double pitch, double yaw) {
+Orientation Orientation::fromRPY(double roll, double pitch, double yaw, const FrameID& frame_id) {
     // Construct from roll, pitch, yaw (Tait-Bryan angles).
     //
     // Convention:
@@ -25,7 +28,7 @@ Orientation Orientation::fromRPY(double roll, double pitch, double yaw) {
     Eigen::AngleAxisd ry(pitch, Eigen::Vector3d::UnitY());
     Eigen::AngleAxisd rz(yaw, Eigen::Vector3d::UnitZ());
     Eigen::Quaterniond q = rz * ry * rx; // yaw * pitch * roll (intrinsic / body-fixed sequence)
-    return Orientation(q);
+    return Orientation(q, frame_id);
 }
 
 Eigen::Vector3d Orientation::rpy() const {
@@ -57,8 +60,28 @@ Eigen::Vector3d Orientation::rpy() const {
     return out;
 }
 
-Matrix3d Orientation::in_frame(const Frame &source_frame, const Frame &target_frame) const {
-    // This is a stub - actual transformation requires a FrameTransform
-    // The user must provide a FrameTransform to define the relationship
-    throw std::runtime_error("Orientation::in_frame() requires a FrameTransform to define frame relationship");
+Orientation Orientation::in_frame(const FrameID& target_frame_id) const {
+    if (frame_id_ == target_frame_id) {
+        // Already in target frame
+        return Orientation(quat_, frame_id_);
+    }
+    
+    // Query the frame tree for the transform
+    FrameTree& tree = FrameTree::instance();
+    FrameTransform transform = tree.get_transform_or_throw(frame_id_, target_frame_id);
+    
+    // Transform the orientation by creating a pose with zero translation and transforming it
+    Pose temp_pose(orientation(), 0.0, 0.0, 0.0, frame_id_);
+    Pose transformed_pose = transform.transform_pose(temp_pose);
+    
+    return Orientation(transformed_pose.orientation(), target_frame_id);
 }
+
+bool operator==(const Orientation& lhs, const Orientation& rhs) {
+    return lhs.isEqual(rhs);
+}
+
+bool Orientation::isEqual(const Orientation& other) const {
+    return (frame_id_ == other.frame_id_) && (quaternion() == other.quaternion());
+}
+

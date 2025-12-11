@@ -4,5 +4,5 @@
 
 Pose CubliPlanner::calculate_balance_pose() {
     // TODO: Calculate balance pose using state information
-    return Pose();
+    return Pose(RigidBodyDynamics::Math::Matrix3dIdentity, 0.0, 0.0, 0.0, FrameIDs::WORLD);
 }

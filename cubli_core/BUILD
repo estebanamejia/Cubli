@@ -10,6 +10,7 @@ cc_library(
     include_prefix = "cubli",
     strip_include_prefix = ".",
     visibility = ["//visibility:public"],
+    copts = ["-std=c++17"],
     deps = ["@rbdl//:rbdl",
             "//math:math"]
 )

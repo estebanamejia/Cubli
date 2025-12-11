@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <random>
 #include "math/Orientation.h"
+#include "math/FrameID.h"
 #include <cmath>
 
 // Helper to normalize angle to [-pi, pi]
@@ -12,6 +13,7 @@ double normalize_angle(double a) {
 }
 
 TEST(OrientationTest, RpyRoundTripRandom) {
+    FrameID frame_id("test_frame");
     std::mt19937_64 gen(12345);
     std::uniform_real_distribution<double> dist_roll(-M_PI, M_PI);
     std::uniform_real_distribution<double> dist_yaw(-M_PI, M_PI);
@@ -24,7 +26,7 @@ TEST(OrientationTest, RpyRoundTripRandom) {
         double pitch = dist_pitch(gen);
         double yaw = dist_yaw(gen);
 
-        Orientation o = Orientation::fromRPY(roll, pitch, yaw);
+        Orientation o = Orientation::fromRPY(roll, pitch, yaw, frame_id);
 
         // Recover angles and reconstruct orientation; compare rotations (not raw angles)
         Eigen::Vector3d out = o.rpy();

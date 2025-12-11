@@ -15,9 +15,6 @@ class FrameTransform {
         Pose transform_pose_;  // Pose that transforms from source to target
         
     public:
-        // Default constructor
-        FrameTransform() : source_frame_(Frame()), target_frame_(Frame()), transform_pose_() {}
-        
         // Constructor with explicit frames and transform
         FrameTransform(
             const Frame &source_frame, 

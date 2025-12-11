@@ -15,7 +15,7 @@ Pose FrameTransform::transform_pose(const Pose &pose_in_source) const {
     // pos_in_target = R * pos_in_source + t
     Vector3d pos_in_target = transform_pose_.orientation() * pose_in_source.position() + transform_pose_.position();
     
-    return Pose(ori_in_target, pos_in_target);
+    return Pose(ori_in_target, pos_in_target, target_frame_.id());
 }
 
 FrameTransform FrameTransform::inverse() const {
@@ -23,7 +23,7 @@ FrameTransform FrameTransform::inverse() const {
     Matrix3d R_inv = transform_pose_.orientation().transpose();
     Vector3d t_inv = -R_inv * transform_pose_.position();
     
-    return FrameTransform(target_frame_, source_frame_, Pose(R_inv, t_inv));
+    return FrameTransform(target_frame_, source_frame_, Pose(R_inv, t_inv, source_frame_.id()));
 }
 
 bool operator==(const FrameTransform& lhs, const FrameTransform& rhs) {
