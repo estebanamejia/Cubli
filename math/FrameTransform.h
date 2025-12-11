@@ -29,6 +29,9 @@ class FrameTransform {
         // Transform a position from source frame to target frame
         Vector3d transform_position(const Vector3d &position_in_source) const;
         
+        // Transform an orientation from source frame to target frame
+        Matrix3d transform_orientation(const Matrix3d &orientation_in_source) const;
+
         // Transform a pose from source frame to target frame
         Pose transform_pose(const Pose &pose_in_source) const;
         

@@ -8,12 +8,15 @@ Vector3d FrameTransform::transform_position(const Vector3d &position_in_source) 
     return pos_in_target;
 }
 
+Matrix3d FrameTransform::transform_orientation(const Matrix3d &orientation_in_source) const {
+    // ori_in_target = R * ori_in_source    
+    Matrix3d ori_in_target = transform_pose_.orientation() * orientation_in_source;
+    return ori_in_target;
+}
+
 Pose FrameTransform::transform_pose(const Pose &pose_in_source) const {
-    // ori_in_target = R * ori_in_source
-    Matrix3d ori_in_target = transform_pose_.orientation() * pose_in_source.orientation();
-    
-    // pos_in_target = R * pos_in_source + t
-    Vector3d pos_in_target = transform_pose_.orientation() * pose_in_source.position() + transform_pose_.position();
+    Matrix3d ori_in_target = transform_orientation(pose_in_source.orientation());
+    Vector3d pos_in_target = transform_position(pose_in_source.position());
     
     return Pose(ori_in_target, pos_in_target, target_frame_.id());
 }
