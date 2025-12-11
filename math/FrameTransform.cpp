@@ -1,24 +1,38 @@
 #include "math/FrameTransform.h"
 #include "math/Pose.h"
 #include <typeinfo>
+#include "math/Position.h"
+#include "math/Orientation.h"
 
-Vector3d FrameTransform::transform_position(const Vector3d &position_in_source) const {
+Position FrameTransform::transform_position(const Position &position_in_source) const {
+    // Ensure the input position is expressed in the source frame
+    Position pos_src = (position_in_source.frame_id() == source_frame_) ?
+                        position_in_source : position_in_source.in_frame(source_frame_);
+
     // pos_in_target = R * pos_in_source + t
-    Vector3d pos_in_target = transform_pose_.orientation() * position_in_source + transform_pose_.position();
-    return pos_in_target;
+    Vector3d pos_in_target = transform_pose_.orientation() * pos_src.position() + transform_pose_.position();
+    return Position(pos_in_target, target_frame_);
 }
 
-Matrix3d FrameTransform::transform_orientation(const Matrix3d &orientation_in_source) const {
-    // ori_in_target = R * ori_in_source    
-    Matrix3d ori_in_target = transform_pose_.orientation() * orientation_in_source;
-    return ori_in_target;
+Orientation FrameTransform::transform_orientation(const Orientation &orientation_in_source) const {
+    // Ensure the input orientation is expressed in the source frame
+    Orientation ori_src = (orientation_in_source.frame_id() == source_frame_) ?
+                          orientation_in_source : orientation_in_source.in_frame(source_frame_);
+
+    // ori_in_target = R * ori_in_source
+    Matrix3d ori_in_target = transform_pose_.orientation() * ori_src.orientation();
+    return Orientation(ori_in_target, target_frame_);
 }
 
 Pose FrameTransform::transform_pose(const Pose &pose_in_source) const {
-    Matrix3d ori_in_target = transform_orientation(pose_in_source.orientation());
-    Vector3d pos_in_target = transform_position(pose_in_source.position());
-    
-    return Pose(ori_in_target, pos_in_target, target_frame_.id());
+    // Convert Pose components to Position/Orientation and reuse new methods
+    Orientation ori_src(pose_in_source.orientation(), pose_in_source.frame_id());
+    Position pos_src(pose_in_source.position(), pose_in_source.frame_id());
+
+    Orientation ori_in_target = transform_orientation(ori_src);
+    Position pos_in_target = transform_position(pos_src);
+
+    return Pose(ori_in_target.orientation(), pos_in_target.position(), target_frame_);
 }
 
 FrameTransform FrameTransform::inverse() const {
@@ -26,7 +40,7 @@ FrameTransform FrameTransform::inverse() const {
     Matrix3d R_inv = transform_pose_.orientation().transpose();
     Vector3d t_inv = -R_inv * transform_pose_.position();
     
-    return FrameTransform(target_frame_, source_frame_, Pose(R_inv, t_inv, source_frame_.id()));
+    return FrameTransform(target_frame_, source_frame_, Pose(R_inv, t_inv, source_frame_));
 }
 
 bool operator==(const FrameTransform& lhs, const FrameTransform& rhs) {

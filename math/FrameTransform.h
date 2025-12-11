@@ -1,8 +1,10 @@
 #pragma once
 
 #include <rbdl/rbdl.h>
-#include "math/Frame.h"
+#include "math/FrameID.h"
 #include "math/Pose.h"
+#include "math/Position.h"
+#include "math/Orientation.h"
 
 using namespace RigidBodyDynamics::Math;
 
@@ -10,27 +12,27 @@ using namespace RigidBodyDynamics::Math;
 // It stores the pose (rotation + translation) that transforms from source_frame to target_frame
 class FrameTransform {
     private:
-        Frame source_frame_;
-        Frame target_frame_;
+        FrameID source_frame_;
+        FrameID target_frame_;
         Pose transform_pose_;  // Pose that transforms from source to target
         
     public:
         // Constructor with explicit frames and transform
         FrameTransform(
-            const Frame &source_frame, 
-            const Frame &target_frame, 
+            const FrameID &source_frame, 
+            const FrameID &target_frame, 
             const Pose &transform_pose
         ) : source_frame_(source_frame), target_frame_(target_frame), transform_pose_(transform_pose) {}
         
-        Frame source_frame() const { return source_frame_; }
-        Frame target_frame() const { return target_frame_; }
+        FrameID source_frame() const { return source_frame_; }
+        FrameID target_frame() const { return target_frame_; }
         Pose pose() const { return transform_pose_; }
         
         // Transform a position from source frame to target frame
-        Vector3d transform_position(const Vector3d &position_in_source) const;
+        Position transform_position(const Position &position_in_source) const;
         
         // Transform an orientation from source frame to target frame
-        Matrix3d transform_orientation(const Matrix3d &orientation_in_source) const;
+        Orientation transform_orientation(const Orientation &orientation_in_source) const;
 
         // Transform a pose from source frame to target frame
         Pose transform_pose(const Pose &pose_in_source) const;

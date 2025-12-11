@@ -1,14 +1,14 @@
 #pragma once
 
-#include "math/Point.h"
+#include "math/Position.h"
 #include "math/FrameID.h"
 #include "math/Pose.h"
 #include <rbdl/rbdl.h>
 
 class CubliState {
     private:
-        Point center_of_mass_pos_;
-        Point contact_corner_pos_;
+        Position center_of_mass_pos_;
+        Position contact_corner_pos_;
         Matrix3d orientation_;
     public:
         // Default construct points to zero; Pose/orientation uses identity.

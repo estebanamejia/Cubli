@@ -1,15 +1,17 @@
 cc_library(
     name = "math",
     hdrs = ["Pose.h",
-            "Frame.h",
+            
             "FrameID.h",
             "Point.h",
+            "Position.h",
             "Orientation.h",
             "FrameTransform.h",
             "FrameTree.h"],
     srcs = ["Pose.cpp",
-            "Frame.cpp",
+            
             "Point.cpp",
+            "Position.cpp",
             "Orientation.cpp",
             "FrameTransform.cpp",
             "FrameTree.cpp"],

@@ -42,25 +42,20 @@ Frame sensor(FrameIDs::SENSOR);
 
 ## Core Classes
 
-### 1. **Frame** (`math/Frame.h` & `math/Frame.cpp`)
-A pure frame identifier with no implicit transforms or position data.
+### 1. **FrameID** (`math/FrameID.h`)
+The library uses `FrameID` as the canonical frame identifier type. `FrameID` is a small, hash-based identifier constructed
+from a unique debug string. It is the type returned by `Position::frame_id()` and used throughout the APIs.
 
-**Key Features:**
-- Simple identifier for a coordinate frame (uses FrameID)
-- Comparison and equality support
-- NO stored position/orientation (these come from FrameTransform)
-- Type-safe frame references
+**Key features:**
+- Type-safe identifier for frames
+- Hashable and comparable for maps/sets
+- Stores debug name for logging
 
 **Example:**
 ```cpp
 FrameID world_id("WORLD_COORDINATE_FRAME_ROOT");
 FrameID base_id("BASE_ROBOT_FRAME");
-
-Frame world_frame(world_id);
-Frame robot_base(base_id);
-
-// Frames are uniquely identified - no string confusion
-EXPECT_EQ(world_frame.id(), world_id);
+EXPECT_EQ(world_id.name(), std::string("WORLD_COORDINATE_FRAME_ROOT"));
 ```
 
 ### 2. **FrameID** (`math/FrameID.h`)
@@ -152,14 +147,15 @@ Frame base = Frame(FrameName("base"));
 Pose base_relative_to_world(Matrix3dIdentity, Vector3d(1, 0, 0));
 FrameTransform world_to_base(world, base, base_relative_to_world);
 
-// Transform a position
-Vector3d point_in_base; point_in_base << 0, 0, 0;
-Vector3d point_in_world = world_to_base.transform_position(point_in_base);
-// Result: (1, 0, 0)
+// Transform a position (use `Position` which carries its frame)
+Position point_in_base(Vector3d(0, 0, 0), base.id());
+Position point_in_world = world_to_base.transform_position(point_in_base);
+// Result: Position(Vector3d(1, 0, 0), world.id()) — expressed in `world`
 ```
 
-### 6. **FrameName** (`math/Frame.h`)
-Lightweight frame identifier using string comparison.
+### 6. **FrameName**
+(Deprecated) Earlier drafts used a `Frame` wrapper type; the current implementation uses `FrameID` directly. Examples and APIs
+in this README use `FrameID` and the `FrameIDs` namespace.
 
 ## Usage Patterns
 
@@ -188,16 +184,16 @@ FrameID camera_id = FrameIDs::CAMERA;
 FrameID world_id("WORLD_COORDINATE_FRAME_ROOT");
 FrameID camera_id("CAMERA_OPTICAL_FRAME");
 
-Frame world = Frame(world_id);
-Frame camera = Frame(camera_id);
-
 // Define the relationship
 Pose camera_pose(rotation, translation);
-FrameTransform world_to_camera(world, camera, camera_pose);
+FrameTransform world_to_camera(world_id, camera_id, camera_pose);
 
 // Use it to transform data
 Point point(position);
-Vector3d point_in_camera = world_to_camera.transform_position(point.position());
+// Wrap the point data with a `Position` tied to its frame (example uses `base_id`), then transform
+FrameID base_id("BASE_ROBOT_FRAME_ORIGIN");
+Position point_in_base(point.position(), base_id);
+Position point_in_camera = world_to_camera.transform_position(point_in_base);
 ```
 
 ### Pattern 4: Chain Transformations
@@ -207,17 +203,14 @@ FrameID world_id("WORLD_COORDINATE_FRAME_ROOT");
 FrameID base_id("BASE_ROBOT_FRAME_ORIGIN");
 FrameID tool_id("TOOL_TIP_FRAME");
 
-Frame world(world_id);
-Frame base(base_id);
-Frame tool(tool_id);
-
+// FrameTransform examples expect `FrameID` values for source/target
 FrameTransform world_to_base = /* ... */;
 FrameTransform base_to_tool = /* ... */;
 
 // Transform step by step
-Vector3d in_tool = /* ... */;
-Vector3d in_base = base_to_tool.transform_position(in_tool);
-Vector3d in_world = world_to_base.transform_position(in_base);
+Position in_tool(Vector3d(/* ... */), tool_id);
+Position in_base = base_to_tool.transform_position(in_tool);
+Position in_world = world_to_base.transform_position(in_base);
 ```
 
 ## Transformation Mathematics
@@ -242,10 +235,10 @@ T^-1 = [R^T * (-t), R^T]
 ## Architecture Notes
 
 ### No Circular Dependencies
-- Frame includes only string utilities
-- Pose has no frame references
-- Point/Orientation are pure data
-- FrameTransform brings everything together
+- `FrameID` is just an identifier used throughout the math library
+- Pose has no frame references (it stores a frame id for conversions)
+- Point/Orientation are pure data with frame-aware wrappers
+- FrameTransform brings frame relationships and conversions together
 
 ### Explicit > Implicit
 Every place code accesses frame-relative data, the frames are explicit:

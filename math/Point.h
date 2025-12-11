@@ -1,44 +1,36 @@
 #pragma once
 
 #include <rbdl/rbdl.h>
-#include "math/FrameID.h"
+#include <string>
+#include "math/Position.h"
 
 using namespace RigidBodyDynamics::Math;
 using namespace std;
 
-// Forward declaration
-class FrameTree;
-
-// Point represents a 3D position in a specific coordinate frame.
-// Each point is tied to a frame via its frame ID. To get the coordinates
-// of this point in a different frame, use in_frame(target_frame_id).
+// Point is an object that holds a Position and a unique name.
+// The Position type is the frame-aware 3D position; Points are named
+// entities that reference a Position.
 class Point {
     private:
-        Vector3d position_;
-        FrameID frame_id_;
-        
+        Position position_;
+        string name_;
     public:
-        // Initialize with x, y, z components and a frame identifier
-        Point(double x, double y, double z, const FrameID& frame_id);
-        
-        // Initialize with a Vector3d and frame identifier
-        Point(const Vector3d& position, const FrameID& frame_id);
+        // Construct from components and a frame identifier plus a name
+        Point(double x, double y, double z, const FrameID& frame_id, const string& name);
 
-        // Explicit component accessors — these are relative to the point's current frame
-        double x() const { return position_(0); }
-        double y() const { return position_(1); }
-        double z() const { return position_(2); }
-        
-        // Get the underlying position vector in the current frame
-        Vector3d position() const { return position_; }
-        
-        // Get the frame ID this point is expressed in
-        FrameID frame_id() const { return frame_id_; }
-        
-        // Return a new Point representing the same location but in a different frame
-        // Throws if no transform path exists between the current frame and target_frame_id
+        // Construct from a Position and a name
+        Point(const Position& position, const string& name);
+
+        // Accessors
+        const string& name() const { return name_; }
+        const Position& position() const { return position_; }
+        FrameID frame_id() const { return position_.frame_id(); }
+
+        // Return a new Point with the Position expressed in a different frame
+        // Name is preserved.
         Point in_frame(const FrameID& target_frame_id) const;
-        
-        friend bool operator==(const Point&, const Point&);
-        virtual bool isEqual(const Point& other) const;
+
+        // Equality for Point objects is identity by name (names are unique)
+        friend bool operator==(const Point& lhs, const Point& rhs) { return lhs.name_ == rhs.name_; }
+        virtual bool isEqual(const Point& other) const { return name_ == other.name_; }
 };

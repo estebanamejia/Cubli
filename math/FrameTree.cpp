@@ -20,17 +20,14 @@ void FrameTree::add_transform(const FrameID& source, const FrameID& target, cons
 }
 
 void FrameTree::add_transform(const FrameID& source, const FrameID& target, const Pose& pose) {
-    Frame src_frame(source);
-    Frame tgt_frame(target);
-    FrameTransform transform(src_frame, tgt_frame, pose);
+    FrameTransform transform(source, target, pose);
     add_transform(source, target, transform);
 }
 
 bool FrameTree::get_transform(const FrameID& source, const FrameID& target, FrameTransform& result) const {
     if (source == target) {
         // Identity transform
-        Frame src_frame(source);
-        result = FrameTransform(src_frame, src_frame, Pose(RigidBodyDynamics::Math::Matrix3dIdentity, 0.0, 0.0, 0.0, source));
+        result = FrameTransform(source, source, Pose(RigidBodyDynamics::Math::Matrix3dIdentity, 0.0, 0.0, 0.0, source));
         return true;
     }
     
@@ -47,9 +44,8 @@ FrameTransform FrameTree::get_transform_or_throw(const FrameID& source, const Fr
     std::vector<FrameTransform> path;
     if (source == target) {
         // Identity transform
-        Frame src_frame(source);
         Pose identity_pose(RigidBodyDynamics::Math::Matrix3dIdentity, 0.0, 0.0, 0.0, source);
-        return FrameTransform(src_frame, src_frame, identity_pose);
+        return FrameTransform(source, source, identity_pose);
     }
     
     if (!find_path(source, target, path)) {
@@ -134,8 +130,7 @@ FrameTransform FrameTree::compose_transforms(const std::vector<FrameTransform>& 
     if (transforms.empty()) {
         // Return identity transform
         FrameID identity_id("identity");
-        Frame identity_frame(identity_id);
-        return FrameTransform(identity_frame, identity_frame, Pose(RigidBodyDynamics::Math::Matrix3dIdentity, 0.0, 0.0, 0.0, identity_id));
+        return FrameTransform(identity_id, identity_id, Pose(RigidBodyDynamics::Math::Matrix3dIdentity, 0.0, 0.0, 0.0, identity_id));
     }
     
     if (transforms.size() == 1) {
@@ -151,13 +146,12 @@ FrameTransform FrameTree::compose_transforms(const std::vector<FrameTransform>& 
     }
     
     // The source is from the first transform, target is from the last
-    FrameID target_id = transforms[transforms.size() - 1].target_frame().id();
-    Frame source = transforms[0].source_frame();
-    Frame target = transforms[transforms.size() - 1].target_frame();
-    
+    FrameID target_id = transforms.back().target_frame();
+    FrameID source_id = transforms.front().source_frame();
+
     // Create final pose with correct target frame ID
     Pose result_pose(composed_pose.orientation(), composed_pose.position(), target_id);
-    
-    return FrameTransform(source, target, result_pose);
+
+    return FrameTransform(source_id, target_id, result_pose);
 }
 

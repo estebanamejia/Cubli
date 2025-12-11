@@ -1,9 +1,8 @@
 #include <gtest/gtest.h>
 #include <cmath>
-#include "math/Point.h"
+#include "math/Position.h"
 #include "math/Pose.h"
 #include "math/Orientation.h"
-#include "math/Frame.h"
 #include "math/FrameID.h"
 #include "math/FrameTransform.h"
 #include "math/FrameTree.h"
@@ -42,16 +41,16 @@ protected:
 
 TEST_F(FrameAwareGeometryTest, FrameIDStorage) {
     FrameID frame_id("test_frame");
-    Point point(0.5, 1.0, 2.0, frame_id);
+    Position point(0.5, 1.0, 2.0, frame_id);
     EXPECT_EQ(point.frame_id(), frame_id);
 }
 
 TEST_F(FrameAwareGeometryTest, PointInFrame) {
     // Create a point at origin in base frame
-    Point point_in_base(0.0, 0.0, 0.0, base_id);
+    Position point_in_base(0.0, 0.0, 0.0, base_id);
     
     // Transform to world frame
-    Point point_in_world = point_in_base.in_frame(world_id);
+    Position point_in_world = point_in_base.in_frame(world_id);
     
     // Since base is translated (1, 0, 0) from world, origin of base should be at (1, 0, 0) in world
     EXPECT_DOUBLE_EQ(point_in_world.x(), 1.0);
@@ -62,10 +61,10 @@ TEST_F(FrameAwareGeometryTest, PointInFrame) {
 
 TEST_F(FrameAwareGeometryTest, PointInFrameRoundTrip) {
     // Create a point in world frame
-    Point point_in_world(1.0, 2.0, 3.0, world_id);
+    Position point_in_world(1.0, 2.0, 3.0, world_id);
     
     // Transform to base frame
-    Point point_in_base = point_in_world.in_frame(base_id);
+    Position point_in_base = point_in_world.in_frame(base_id);
     
     // Should be offset by -1.0 in X (inverse of the translation)
     EXPECT_DOUBLE_EQ(point_in_base.x(), 0.0);  // 1.0 - 1.0
@@ -73,7 +72,7 @@ TEST_F(FrameAwareGeometryTest, PointInFrameRoundTrip) {
     EXPECT_DOUBLE_EQ(point_in_base.z(), 3.0);
     
     // Transform back to world
-    Point point_back_in_world = point_in_base.in_frame(world_id);
+    Position point_back_in_world = point_in_base.in_frame(world_id);
     EXPECT_DOUBLE_EQ(point_back_in_world.x(), 1.0);
     EXPECT_DOUBLE_EQ(point_back_in_world.y(), 2.0);
     EXPECT_DOUBLE_EQ(point_back_in_world.z(), 3.0);
@@ -109,10 +108,10 @@ TEST_F(FrameAwareGeometryTest, OrientationInFrame) {
 
 TEST_F(FrameAwareGeometryTest, MultiHopTransform) {
     // Create a point at tool origin
-    Point point_in_tool(0.0, 0.0, 0.0, tool_id);
+    Position point_in_tool(0.0, 0.0, 0.0, tool_id);
     
     // Transform directly to world through the frame tree (should find path: tool -> base -> world)
-    Point point_in_world = point_in_tool.in_frame(world_id);
+    Position point_in_world = point_in_tool.in_frame(world_id);
     
     // tool origin in base is (0, 0.5, 0), base origin in world is (1, 0, 0)
     // So tool origin in world should be (1, 0.5, 0)
@@ -124,8 +123,8 @@ TEST_F(FrameAwareGeometryTest, MultiHopTransform) {
 
 TEST_F(FrameAwareGeometryTest, SameFrameTransform) {
     // Transform a point to its own frame should be a no-op
-    Point point(1.0, 2.0, 3.0, base_id);
-    Point point_same = point.in_frame(base_id);
+    Position point(1.0, 2.0, 3.0, base_id);
+    Position point_same = point.in_frame(base_id);
     
     EXPECT_DOUBLE_EQ(point_same.x(), point.x());
     EXPECT_DOUBLE_EQ(point_same.y(), point.y());
