@@ -17,30 +17,21 @@ protected:
     FrameID tool_id{"TOOL_TEST_FRAME"};
     
     // Create frames from IDs
-    Frame world_frame;
-    Frame base_frame;
-    Frame tool_frame;
+    Frame world_frame = Frame(world_id);
+    Frame base_frame = Frame(base_id);
+    Frame tool_frame = Frame(tool_id);
     
     // Create explicit transforms between frames
     FrameTransform world_to_base;
     FrameTransform base_to_tool;
     
     void SetUp() override {
-        // Frames are now identified by unique FrameIDs
-        world_frame = Frame(world_id);
-        base_frame = Frame(base_id);
-        tool_frame = Frame(tool_id);
-        
         // Explicit transform: base is translated 1 unit in X relative to world
-        Vector3d base_translation;
-        base_translation << 1.0, 0.0, 0.0;
-        Pose world_to_base_pose(Matrix3dIdentity, base_translation);
+        Pose world_to_base_pose(Matrix3dIdentity, 1.0, 0.0, 0.0);
         world_to_base = FrameTransform(world_frame, base_frame, world_to_base_pose);
         
         // Explicit transform: tool is translated 0.5 units in Y relative to base
-        Vector3d tool_translation;
-        tool_translation << 0.0, 0.5, 0.0;
-        Pose base_to_tool_pose(Matrix3dIdentity, tool_translation);
+        Pose base_to_tool_pose(Matrix3dIdentity, 0.0, 0.5, 0.0);
         base_to_tool = FrameTransform(base_frame, tool_frame, base_to_tool_pose);
     }
 };
@@ -56,23 +47,17 @@ TEST_F(ExplicitFrameTransformTest, FrameIdentifiers) {
 }
 
 TEST_F(ExplicitFrameTransformTest, PureData) {
-    Vector3d point_pos;
-    point_pos << 0.5, 0.0, 0.0;
-    Point point(point_pos);
-    EXPECT_DOUBLE_EQ(point.position()(0), 0.5);
-    EXPECT_DOUBLE_EQ(point.position()(1), 0.0);
-    EXPECT_DOUBLE_EQ(point.position()(2), 0.0);
+    Point point(0.5, 0.0, 0.0);
+    EXPECT_DOUBLE_EQ(point.x(), 0.5);
+    EXPECT_DOUBLE_EQ(point.y(), 0.0);
+    EXPECT_DOUBLE_EQ(point.z(), 0.0);
 }
 
 TEST_F(ExplicitFrameTransformTest, PoseIsPureData) {
-    Vector3d pose_translation;
-    pose_translation << 1.0, 1.0, 1.0;
-    Pose pose(Matrix3dIdentity, pose_translation);
-    
-    Vector3d trans = pose.translation();
-    EXPECT_DOUBLE_EQ(trans(0), 1.0);
-    EXPECT_DOUBLE_EQ(trans(1), 1.0);
-    EXPECT_DOUBLE_EQ(trans(2), 1.0);
+    Pose pose(Matrix3dIdentity, 1.0, 1.0, 1.0);
+    EXPECT_DOUBLE_EQ(pose.x(), 1.0);
+    EXPECT_DOUBLE_EQ(pose.y(), 1.0);
+    EXPECT_DOUBLE_EQ(pose.z(), 1.0);
 }
 
 TEST_F(ExplicitFrameTransformTest, OrientationIsPureData) {
@@ -90,7 +75,7 @@ TEST_F(ExplicitFrameTransformTest, FrameTransformPosition) {
     // Create a point at origin in base frame
     Vector3d point_in_base;
     point_in_base << 0.0, 0.0, 0.0;
-    
+
     // Transform using explicit FrameTransform
     Vector3d point_in_world = world_to_base.transform_position(point_in_base);
     
@@ -101,18 +86,14 @@ TEST_F(ExplicitFrameTransformTest, FrameTransformPosition) {
 }
 
 TEST_F(ExplicitFrameTransformTest, FrameTransformPose) {
-    Vector3d pose_translation;
-    pose_translation << 0.5, 0.0, 0.0;
-    Pose pose_in_base(Matrix3dIdentity, pose_translation);
-    
+    Pose pose_in_base(Matrix3dIdentity, 0.5, 0.0, 0.0);
     // Transform pose from base frame to world frame using explicit transform
     Pose pose_in_world = world_to_base.transform_pose(pose_in_base);
     
     // Position should be (1.0 + 0.5, 0, 0) = (1.5, 0, 0) in world
-    Vector3d trans_in_world = pose_in_world.translation();
-    EXPECT_DOUBLE_EQ(trans_in_world(0), 1.5);
-    EXPECT_DOUBLE_EQ(trans_in_world(1), 0.0);
-    EXPECT_DOUBLE_EQ(trans_in_world(2), 0.0);
+    EXPECT_DOUBLE_EQ(pose_in_world.x(), 1.5);
+    EXPECT_DOUBLE_EQ(pose_in_world.y(), 0.0);
+    EXPECT_DOUBLE_EQ(pose_in_world.z(), 0.0);
 }
 
 TEST_F(ExplicitFrameTransformTest, InverseTransform) {
@@ -126,7 +107,7 @@ TEST_F(ExplicitFrameTransformTest, InverseTransform) {
     // So the inverse should translate by (-1, 0, 0)
     Vector3d point_in_base;
     point_in_base << 0.0, 0.0, 0.0;
-    
+
     Vector3d point_in_world = base_to_world.transform_position(point_in_base);
     
     // Origin of base in world coordinates should be (-1, 0, 0)
@@ -140,7 +121,7 @@ TEST_F(ExplicitFrameTransformTest, FrameTransformComposition) {
     // Compose transforms: world -> base -> tool
     Vector3d point_in_tool;
     point_in_tool << 0.0, 0.0, 0.0;
-    
+
     // Transform from tool to base
     Vector3d point_in_base = base_to_tool.transform_position(point_in_tool);
     EXPECT_DOUBLE_EQ(point_in_base(0), 0.0);
@@ -161,7 +142,7 @@ TEST_F(ExplicitFrameTransformTest, RotationTransform) {
                1.0,  0.0, 0.0,
                0.0,  0.0, 1.0;
     
-    Pose rotation_pose(rotation, Vector3dZero);
+    Pose rotation_pose(rotation, 0.0, 0.0, 0.0);
     FrameTransform rotation_transform(world_frame, base_frame, rotation_pose);
     
     // Transform a point (1, 0, 0) by 90 degree rotation

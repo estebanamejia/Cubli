@@ -9,6 +9,6 @@ void Cubli::balance_cubli() {
 
 }
 
-Pose Cubli::get_cubli_pose(const FrameName &name) {
-    return state_.get_cubli_pose(name);
+Pose Cubli::get_cubli_pose(const Frame &target_frame) {
+    return state_.get_cubli_pose(target_frame);
 }

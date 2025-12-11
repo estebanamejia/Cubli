@@ -19,3 +19,14 @@ cc_test(
         "//math:math",
     ],
 )
+
+cc_test(
+    name = "orientation_rpy_test",
+    size = "small",
+    srcs = ["test_orientation_rpy.cpp"],
+    deps = [
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+        "//math:math",
+    ],
+)
